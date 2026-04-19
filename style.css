@@ -1,0 +1,80 @@
+/* Загальні налаштування та бордовий фон */
+body {
+    background-color: #800020; 
+    color: white;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* Контейнер гри (напівпрозорий темний фон для контрасту) */
+.game-container {
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.4);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.6);
+}
+
+.stats {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+/* Налаштування сітки 5х5 */
+.grid {
+    display: grid;
+    /* Створюємо 5 однакових колонок по 60px */
+    grid-template-columns: repeat(5, 60px); 
+    grid-gap: 5px;
+    margin: 0 auto 20px auto;
+    justify-content: center;
+}
+
+/* Базовий стан клітинки (Вимкнено - Чорна) */
+.cell {
+    width: 60px;
+    height: 60px;
+    background-color: black;
+    border: 2px solid #333;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s;
+}
+
+/* Ефект при наведенні для інтерактивності */
+.cell:hover {
+    transform: scale(1.05);
+}
+
+/* Стан увімкненої клітинки (Увімкнено - Біла) */
+.cell.is-on {
+    background-color: white;
+    border-color: #fff;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8); /* Легке світіння */
+}
+
+/* Кнопки управління */
+.controls button {
+    padding: 10px 20px;
+    margin: 0 10px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: white;
+    color: #800020; /* Текст кнопок під колір фону сторінки */
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: 0.2s;
+}
+
+.controls button:hover {
+    background-color: #ddd;
+}
