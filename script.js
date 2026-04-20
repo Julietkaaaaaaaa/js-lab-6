@@ -47,7 +47,6 @@
         if (index === -1) return;
         const level = levels[index];
         
-        // Клонування масиву для уникнення передачі за посиланням (Lec 1.4)
         gridData = level.grid.map(row => [...row]);
         
         // Скидання інтерфейсу та лічильників
@@ -95,7 +94,7 @@
         }
         movesElement.textContent = moves;
 
-        // Перемикання станів (хрестоподібна область)
+        // Перемикання станів 
         toggle(r, c);
         toggle(r - 1, c);
         toggle(r + 1, c);
