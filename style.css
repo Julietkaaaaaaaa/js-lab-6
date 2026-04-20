@@ -1,70 +1,92 @@
+/* Робимо фон сторінки темним, як ви просили */
 body {
-    background-color: #2c3e50;
+    background-color: #2b000d; 
     color: white;
-    font-family: sans-serif;
+    font-family: Arial, sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     margin: 0;
 }
 
+/* Контейнер гри робимо ще трохи темнішим для об'єму та обмежуємо ширину */
 .game-container {
     text-align: center;
-    background: #34495e;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    background-color: #1a0008; 
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.8);
+    width: 380px; 
 }
 
+/* ВИПРАВЛЕННЯ: Тепер статистика виглядає як 3 окремі красиві блоки */
+.stats {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px; /* Гарантована відстань між блоками */
+    margin-bottom: 25px;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.stats p {
+    margin: 0;
+    background-color: rgba(255, 255, 255, 0.1); /* Легкий фон для кожної плашки */
+    padding: 10px;
+    border-radius: 8px;
+    flex: 1; /* Рівномірний розподіл ширини */
+}
+
+/* Налаштування сітки 5х5 */
 .grid {
     display: grid;
-    grid-template-columns: repeat(5, 60px);
-    grid-gap: 10px;
-    margin: 20px auto;
-    transition: opacity 0.3s;
+    grid-template-columns: repeat(5, 60px); 
+    grid-gap: 5px;
+    margin: 0 auto 20px auto;
+    justify-content: center;
 }
 
+/* Базовий стан (Чорний) */
 .cell {
     width: 60px;
     height: 60px;
-    background-color: #1a252f;
-    border-radius: 4px;
+    background-color: black;
+    border: 2px solid #444;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: background-color 0.2s ease, transform 0.1s;
 }
 
+.cell:hover {
+    transform: scale(1.05);
+}
+
+/* Увімкнений стан (Білий) */
 .cell.is-on {
-    background-color: #f1c40f;
-    box-shadow: 0 0 15px #f1c40f;
+    background-color: white;
+    border-color: #fff;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
 }
 
-.stats {
-    display: flex;
-    justify-content: space-around;
-    font-size: 1.1rem;
-    margin-bottom: 10px;
+.controls {
+    margin-top: 10px;
 }
 
-#status-message {
-    height: 60px;
-    margin: 10px 0;
-    font-weight: bold;
-    color: #2ecc71;
-    font-size: 1.2rem;
-}
-
-button {
-    padding: 10px 20px;
-    margin: 5px;
+.controls button {
+    padding: 12px 20px;
+    margin: 0 5px;
+    font-size: 14px;
     cursor: pointer;
     border: none;
     border-radius: 5px;
-    background: #e67e22;
-    color: white;
+    background-color: white;
+    color: #2b000d;
     font-weight: bold;
+    text-transform: uppercase;
+    transition: 0.2s;
 }
 
-button:hover {
-    background: #d35400;
+.controls button:hover {
+    background-color: #ddd;
 }
