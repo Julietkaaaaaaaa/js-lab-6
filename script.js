@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-    // Елементи DOM
+    // Ініціалізація DOM
     const gridElement = document.getElementById('grid');
     const timerElement = document.getElementById('timer');
     const movesElement = document.getElementById('moves');
@@ -15,17 +15,11 @@
     const modalNewGameBtn = document.getElementById('modal-new-game-btn');
 
     // Стан гри
-    let levels = [];
-    let currentLevelIndex = -1;
-    let gridData = [];
-    let moves = 0;
-    let lastRow = -1;
-    let lastCol = -1;
-    let timerId = null;
-    let timeElapsed = 0;
-    let isGameActive = false;
+    let levels = [], currentLevelIndex = -1, gridData = [];
+    let moves = 0, lastRow = -1, lastCol = -1, timerId = null;
+    let timeElapsed = 0, isGameActive = false;
 
-    // Завантаження даних
+    // Завантаження рівнів
     fetch('levels.json')
         .then(res => res.json())
         .then(data => {
@@ -33,13 +27,13 @@
             startNewGame();
         });
 
-    // Обробники подій
+    // Події
     newGameBtn.addEventListener('click', startNewGame);
     restartBtn.addEventListener('click', () => loadLevel(currentLevelIndex));
     modalNewGameBtn.addEventListener('click', startNewGame);
 
     function startNewGame() {
-        winModal.classList.add('hidden'); 
+        winModal.style.display = 'none'; // Приховування вікна
         let newIndex;
         do {
             newIndex = Math.floor(Math.random() * levels.length);
@@ -49,13 +43,12 @@
     }
 
     function loadLevel(index) {
-        winModal.classList.add('hidden'); 
+        winModal.style.display = 'none';
         const level = levels[index];
         gridData = level.grid.map(row => [...row]); 
         targetElement.textContent = level.targetMoves;
         moves = 0;
-        lastRow = -1;
-        lastCol = -1;
+        lastRow = -1; lastCol = -1;
         movesElement.textContent = moves;
         isGameActive = true;
         resetTimer();
@@ -76,24 +69,18 @@
     }
 
     function handleCellClick(r, c) {
-        if (!isGameActive) return;
+        if (!isGameActive) return; // Блокування ходів
 
         if (r === lastRow && c === lastCol) {
-            moves--; 
-            lastRow = -1;
-            lastCol = -1;
+            moves--; lastRow = -1; lastCol = -1;
         } else {
-            moves++;
-            lastRow = r;
-            lastCol = c;
+            moves++; lastRow = r; lastCol = c;
         }
         movesElement.textContent = moves;
 
         toggle(r, c);
-        toggle(r - 1, c);
-        toggle(r + 1, c);
-        toggle(r, c - 1);
-        toggle(r, c + 1);
+        toggle(r - 1, c); toggle(r + 1, c);
+        toggle(r, c - 1); toggle(r, c + 1);
 
         renderGrid();
         checkWin();
@@ -108,11 +95,13 @@
     function checkWin() {
         const hasLight = gridData.some(row => row.includes(1));
         if (!hasLight) {
-            isGameActive = false;
+            isGameActive = false; // Зупинка гри
             clearInterval(timerId);
             modalMoves.textContent = moves;
             modalTime.textContent = timeElapsed;
-            setTimeout(() => winModal.classList.remove('hidden'), 300);
+            setTimeout(() => {
+                winModal.style.display = 'flex'; // Показ вікна
+            }, 300);
         }
     }
 
