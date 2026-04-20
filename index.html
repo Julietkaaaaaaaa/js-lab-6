@@ -2,32 +2,27 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lights Out</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="game-container">
         <h1>Lights Out</h1>
+        
         <div class="stats">
             <p>Час: <span id="timer">0</span> с</p>
             <p>Ходи: <span id="moves">0</span></p>
             <p>Ціль: <span id="target">0</span></p>
         </div>
-        <div id="grid" class="grid"></div>
-        <div class="controls">
-            <button id="new-game-btn">New Game</button>
-            <button id="restart-btn">Restart</button>
-        </div>
-    </div>
 
-    <div id="win-modal" class="modal">
-        <div class="modal-content">
-            <h2>Рівень Пройдено!</h2>
-            <div class="modal-stats">
-                <p>Ходи: <strong id="modal-moves">0</strong></p>
-                <p>Час: <strong id="modal-time">0</strong> с</p>
-            </div>
-            <button id="modal-new-game-btn">Грати ще</button>
+        <div id="grid" class="grid"></div>
+
+        <div id="status-message"></div>
+
+        <div class="controls">
+            <button id="new-game-btn">Нова гра</button>
+            <button id="restart-btn">Скинути</button>
         </div>
     </div>
 
