@@ -1,61 +1,72 @@
 'use strict';
 
 (function () {
-    // Ініціалізація DOM
+    // Елементи DOM
     const gridElement = document.getElementById('grid');
     const timerElement = document.getElementById('timer');
     const movesElement = document.getElementById('moves');
     const targetElement = document.getElementById('target');
+    const statusMessage = document.getElementById('status-message');
     const newGameBtn = document.getElementById('new-game-btn');
     const restartBtn = document.getElementById('restart-btn');
-    
-    const winModal = document.getElementById('win-modal');
-    const modalMoves = document.getElementById('modal-moves');
-    const modalTime = document.getElementById('modal-time');
-    const modalNewGameBtn = document.getElementById('modal-new-game-btn');
 
-    // Стан гри
-    let levels = [], currentLevelIndex = -1, gridData = [];
-    let moves = 0, lastRow = -1, lastCol = -1, timerId = null;
-    let timeElapsed = 0, isGameActive = false;
+    // Стан ігрового сеансу
+    let levels = [];
+    let currentLevelIndex = -1;
+    let gridData = [];
+    let moves = 0;
+    let timeElapsed = 0;
+    let timerId = null;
+    let lastRow = -1;
+    let lastCol = -1;
+    let isGameActive = false;
 
-    // Завантаження рівнів
+    // Отримання конфігурації рівнів
     fetch('levels.json')
         .then(res => res.json())
         .then(data => {
             levels = data;
             startNewGame();
-        });
+        })
+        .catch(err => console.error('Помилка сервера:', err));
 
-    // Події
     newGameBtn.addEventListener('click', startNewGame);
     restartBtn.addEventListener('click', () => loadLevel(currentLevelIndex));
-    modalNewGameBtn.addEventListener('click', startNewGame);
 
     function startNewGame() {
-        winModal.style.display = 'none'; // Приховування вікна
         let newIndex;
         do {
             newIndex = Math.floor(Math.random() * levels.length);
         } while (newIndex === currentLevelIndex && levels.length > 1);
+        
         currentLevelIndex = newIndex;
         loadLevel(currentLevelIndex);
     }
 
     function loadLevel(index) {
-        winModal.style.display = 'none';
+        if (index === -1) return;
         const level = levels[index];
-        gridData = level.grid.map(row => [...row]); 
+        
+        // Клонування масиву для уникнення передачі за посиланням (Lec 1.4)
+        gridData = level.grid.map(row => [...row]);
+        
+        // Скидання інтерфейсу та лічильників
         targetElement.textContent = level.targetMoves;
         moves = 0;
-        lastRow = -1; lastCol = -1;
+        lastRow = -1;
+        lastCol = -1;
         movesElement.textContent = moves;
+        statusMessage.textContent = '';
+        gridElement.style.pointerEvents = 'auto';
+        gridElement.style.opacity = '1';
+        
         isGameActive = true;
         resetTimer();
         startTimer();
         renderGrid();
     }
 
+    // Візуалізація матриці в DOM
     function renderGrid() {
         gridElement.innerHTML = ''; 
         for (let r = 0; r < 5; r++) {
@@ -68,19 +79,28 @@
         }
     }
 
+    // Обробка логіки ходу
     function handleCellClick(r, c) {
-        if (!isGameActive) return; // Блокування ходів
+        if (!isGameActive) return;
 
+        // Перевірка на повторний клік в ту саму клітинку
         if (r === lastRow && c === lastCol) {
-            moves--; lastRow = -1; lastCol = -1;
+            moves--; 
+            lastRow = -1;
+            lastCol = -1;
         } else {
-            moves++; lastRow = r; lastCol = c;
+            moves++;
+            lastRow = r;
+            lastCol = c;
         }
         movesElement.textContent = moves;
 
+        // Перемикання станів (хрестоподібна область)
         toggle(r, c);
-        toggle(r - 1, c); toggle(r + 1, c);
-        toggle(r, c - 1); toggle(r, c + 1);
+        toggle(r - 1, c);
+        toggle(r + 1, c);
+        toggle(r, c - 1);
+        toggle(r, c + 1);
 
         renderGrid();
         checkWin();
@@ -92,16 +112,17 @@
         }
     }
 
+    // Перевірка умови завершення
     function checkWin() {
         const hasLight = gridData.some(row => row.includes(1));
         if (!hasLight) {
-            isGameActive = false; // Зупинка гри
+            isGameActive = false;
             clearInterval(timerId);
-            modalMoves.textContent = moves;
-            modalTime.textContent = timeElapsed;
-            setTimeout(() => {
-                winModal.style.display = 'flex'; // Показ вікна
-            }, 300);
+            
+            // Блокування ігрового поля
+            gridElement.style.pointerEvents = 'none';
+            gridElement.style.opacity = '0.5';
+            statusMessage.textContent = `🎉 ПЕРЕМОГА! Кроків: ${moves} за ${timeElapsed}с`;
         }
     }
 
@@ -115,6 +136,7 @@
     function resetTimer() {
         clearInterval(timerId);
         timeElapsed = 0;
-        timerElement.textContent = timeElapsed;
+        timerElement.textContent = '0';
     }
+
 })();
