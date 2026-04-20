@@ -22,7 +22,7 @@
     let isGameActive = false;
 
     // Отримання конфігурації рівнів
-    fetch('levels.json')
+    fetch('data/levels.json')
         .then(res => res.json())
         .then(data => {
             levels = data;
