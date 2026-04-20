@@ -1,12 +1,11 @@
 'use strict';
 
 (function () {
-    // Елементи DOM
+    // 1. Отримуємо елементи DOM (згідно Lab-6)
     const gridElement = document.getElementById('grid');
     const timerElement = document.getElementById('timer');
     const movesElement = document.getElementById('moves');
     const targetElement = document.getElementById('target');
-    const statusMessage = document.getElementById('status-message');
     const newGameBtn = document.getElementById('new-game-btn');
     const restartBtn = document.getElementById('restart-btn');
 
@@ -15,21 +14,22 @@
     let currentLevelIndex = -1;
     let gridData = [];
     let moves = 0;
-    let timeElapsed = 0;
-    let timerId = null;
     let lastRow = -1;
     let lastCol = -1;
+    let timerId = null;
+    let timeElapsed = 0;
     let isGameActive = false;
 
-    // Завантаження рівнів через fetch
+    // 2. Завантаження даних (fetch згідно Lab-6)
     fetch('levels.json')
         .then(res => res.json())
         .then(data => {
             levels = data;
             startNewGame();
-        });
+        })
+        .catch(err => console.error('Помилка завантаження:', err));
 
-    // Слухачі подій
+    // 3. Логіка кнопок
     newGameBtn.addEventListener('click', startNewGame);
     restartBtn.addEventListener('click', () => loadLevel(currentLevelIndex));
 
@@ -43,22 +43,17 @@
         loadLevel(currentLevelIndex);
     }
 
-    // Ініціалізація ігрового поля
     function loadLevel(index) {
-        if (index === -1) return;
+        const level = levels[index];
         
-        // Глибоке копіювання масиву (передача за значенням)
-        gridData = levels[index].grid.map(row => [...row]);
+        // Копіюємо масив (Lec 1.4), щоб оригінал у levels не змінювався під час гри
+        gridData = level.grid.map(row => [...row]); 
         
-        targetElement.textContent = levels[index].targetMoves;
+        targetElement.textContent = level.targetMoves;
         moves = 0;
         lastRow = -1;
         lastCol = -1;
         movesElement.textContent = moves;
-        statusMessage.innerHTML = '';
-        
-        gridElement.style.opacity = '1';
-        gridElement.style.pointerEvents = 'auto';
         
         isGameActive = true;
         resetTimer();
@@ -66,12 +61,13 @@
         renderGrid();
     }
 
-    // Генерація DOM-вузлів клітинок
+    // 4. Робота з DOM - відмальовування поля
     function renderGrid() {
-        gridElement.innerHTML = '';
+        gridElement.innerHTML = ''; 
         for (let r = 0; r < 5; r++) {
             for (let c = 0; c < 5; c++) {
                 const cell = document.createElement('div');
+                // Одразу задаємо класи
                 cell.className = gridData[r][c] === 1 ? 'cell is-on' : 'cell';
                 cell.addEventListener('click', () => handleCellClick(r, c));
                 gridElement.appendChild(cell);
@@ -79,13 +75,13 @@
         }
     }
 
-    // Обробка вводу користувача
+    // 5. Ввід користувача (обробка кліку)
     function handleCellClick(r, c) {
         if (!isGameActive) return;
 
-        // Ігнорування повторних кліків у ту саму точку
+        // Ігноруємо подвійний клік (вимога з відео)
         if (r === lastRow && c === lastCol) {
-            moves--;
+            moves--; 
             lastRow = -1;
             lastCol = -1;
         } else {
@@ -93,10 +89,9 @@
             lastRow = r;
             lastCol = c;
         }
-        
         movesElement.textContent = moves;
 
-        // Зміна стану клітинок (хрестом)
+        // Перемикаємо саму клітинку та її сусідів (хрестом)
         toggle(r, c);
         toggle(r - 1, c);
         toggle(r + 1, c);
@@ -107,26 +102,24 @@
         checkWin();
     }
 
+    // Допоміжна функція для перемикання (з перевіркою меж поля)
     function toggle(r, c) {
         if (r >= 0 && r < 5 && c >= 0 && c < 5) {
             gridData[r][c] = gridData[r][c] === 1 ? 0 : 1;
         }
     }
 
-    // Перевірка умови завершення гри
+    // 6. Перевірка на перемогу
     function checkWin() {
         const hasLight = gridData.some(row => row.includes(1));
         if (!hasLight) {
             isGameActive = false;
             clearInterval(timerId);
-            
-            gridElement.style.opacity = '0.4';
-            gridElement.style.pointerEvents = 'none';
-            statusMessage.innerHTML = `ПЕРЕМОГА!<br>${moves} кроків за ${timeElapsed}с`;
+            setTimeout(() => alert(`Перемога! Ходів: ${moves}. Час: ${timeElapsed}с`), 100);
         }
     }
 
-    // Керування таймером
+    // 7. Таймер
     function startTimer() {
         timerId = setInterval(() => {
             timeElapsed++;
@@ -137,7 +130,7 @@
     function resetTimer() {
         clearInterval(timerId);
         timeElapsed = 0;
-        timerElement.textContent = '0';
+        timerElement.textContent = timeElapsed;
     }
 
 })();
