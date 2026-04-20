@@ -1,15 +1,21 @@
 'use strict';
 
 (function () {
-    // 1. Отримуємо елементи DOM (згідно Lab-6)
+    // Ініціалізація DOM-елементів
     const gridElement = document.getElementById('grid');
     const timerElement = document.getElementById('timer');
     const movesElement = document.getElementById('moves');
     const targetElement = document.getElementById('target');
     const newGameBtn = document.getElementById('new-game-btn');
     const restartBtn = document.getElementById('restart-btn');
+    
+    // Ініціалізація елементів модального вікна
+    const winModal = document.getElementById('win-modal');
+    const modalMoves = document.getElementById('modal-moves');
+    const modalTime = document.getElementById('modal-time');
+    const modalNewGameBtn = document.getElementById('modal-new-game-btn');
 
-    // Стан гри
+    // Оголошення змінних стану
     let levels = [];
     let currentLevelIndex = -1;
     let gridData = [];
@@ -20,7 +26,7 @@
     let timeElapsed = 0;
     let isGameActive = false;
 
-    // 2. Завантаження даних (fetch згідно Lab-6)
+    // Завантаження масиву рівнів із сервера
     fetch('levels.json')
         .then(res => res.json())
         .then(data => {
@@ -29,11 +35,15 @@
         })
         .catch(err => console.error('Помилка завантаження:', err));
 
-    // 3. Логіка кнопок
+    // Налаштування обробників подій для кнопок
     newGameBtn.addEventListener('click', startNewGame);
     restartBtn.addEventListener('click', () => loadLevel(currentLevelIndex));
+    modalNewGameBtn.addEventListener('click', startNewGame);
 
+    // Функція початку нової гри
     function startNewGame() {
+        winModal.classList.add('hidden'); 
+        
         let newIndex;
         do {
             newIndex = Math.floor(Math.random() * levels.length);
@@ -43,10 +53,11 @@
         loadLevel(currentLevelIndex);
     }
 
+    // Функція завантаження обраного рівня
     function loadLevel(index) {
-        const level = levels[index];
+        winModal.classList.add('hidden'); 
         
-        // Копіюємо масив (Lec 1.4), щоб оригінал у levels не змінювався під час гри
+        const level = levels[index];
         gridData = level.grid.map(row => [...row]); 
         
         targetElement.textContent = level.targetMoves;
@@ -61,13 +72,12 @@
         renderGrid();
     }
 
-    // 4. Робота з DOM - відмальовування поля
+    // Функція генерації ігрового поля
     function renderGrid() {
         gridElement.innerHTML = ''; 
         for (let r = 0; r < 5; r++) {
             for (let c = 0; c < 5; c++) {
                 const cell = document.createElement('div');
-                // Одразу задаємо класи
                 cell.className = gridData[r][c] === 1 ? 'cell is-on' : 'cell';
                 cell.addEventListener('click', () => handleCellClick(r, c));
                 gridElement.appendChild(cell);
@@ -75,11 +85,11 @@
         }
     }
 
-    // 5. Ввід користувача (обробка кліку)
+    // Функція обробки кліку по клітинці
     function handleCellClick(r, c) {
         if (!isGameActive) return;
 
-        // Ігноруємо подвійний клік (вимога з відео)
+        // Перевірка подвійного кліку (скасування ходу)
         if (r === lastRow && c === lastCol) {
             moves--; 
             lastRow = -1;
@@ -91,7 +101,7 @@
         }
         movesElement.textContent = moves;
 
-        // Перемикаємо саму клітинку та її сусідів (хрестом)
+        // Інвертування стану поточної клітинки та сусідніх
         toggle(r, c);
         toggle(r - 1, c);
         toggle(r + 1, c);
@@ -102,24 +112,30 @@
         checkWin();
     }
 
-    // Допоміжна функція для перемикання (з перевіркою меж поля)
+    // Функція інвертування стану окремої клітинки
     function toggle(r, c) {
         if (r >= 0 && r < 5 && c >= 0 && c < 5) {
             gridData[r][c] = gridData[r][c] === 1 ? 0 : 1;
         }
     }
 
-    // 6. Перевірка на перемогу
+    // Функція перевірки умов перемоги
     function checkWin() {
         const hasLight = gridData.some(row => row.includes(1));
         if (!hasLight) {
             isGameActive = false;
             clearInterval(timerId);
-            setTimeout(() => alert(`Перемога! Ходів: ${moves}. Час: ${timeElapsed}с`), 100);
+            
+            modalMoves.textContent = moves;
+            modalTime.textContent = timeElapsed;
+            
+            setTimeout(() => {
+                winModal.classList.remove('hidden');
+            }, 300);
         }
     }
 
-    // 7. Таймер
+    // Функції управління ігровим таймером
     function startTimer() {
         timerId = setInterval(() => {
             timeElapsed++;
