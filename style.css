@@ -1,92 +1,105 @@
-/* Робимо фон сторінки темним, як ви просили */
+:root {
+    --bg-color: #1e1e2e;
+    --cell-off: #45475a;
+    --cell-on: #f9e2af;
+    --text-color: #cdd6f4;
+}
+
 body {
-    background-color: #2b000d; 
-    color: white;
-    font-family: Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
+    height: 100vh;
     margin: 0;
 }
 
-/* Контейнер гри робимо ще трохи темнішим для об'єму та обмежуємо ширину */
-.game-container {
+.game-wrapper {
     text-align: center;
-    background-color: #1a0008; 
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.8);
-    width: 380px; 
+    width: 320px;
 }
 
-/* ВИПРАВЛЕННЯ: Тепер статистика виглядає як 3 окремі красиві блоки */
-.stats {
+.stats-panel {
     display: flex;
     justify-content: space-between;
-    gap: 10px; /* Гарантована відстань між блоками */
-    margin-bottom: 25px;
-    font-size: 0.9rem;
+    margin-bottom: 15px;
     font-weight: bold;
+    font-size: 1.1rem;
 }
 
-.stats p {
-    margin: 0;
-    background-color: rgba(255, 255, 255, 0.1); /* Легкий фон для кожної плашки */
+.board-container {
+    position: relative;
+    background: #313244;
     padding: 10px;
-    border-radius: 8px;
-    flex: 1; /* Рівномірний розподіл ширини */
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
-/* Налаштування сітки 5х5 */
-.grid {
+.board {
     display: grid;
-    grid-template-columns: repeat(5, 60px); 
-    grid-gap: 5px;
-    margin: 0 auto 20px auto;
-    justify-content: center;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
 }
 
-/* Базовий стан (Чорний) */
 .cell {
-    width: 60px;
-    height: 60px;
-    background-color: black;
-    border: 2px solid #444;
-    border-radius: 8px;
+    width: 50px;
+    height: 50px;
+    background-color: var(--cell-off);
+    border-radius: 6px;
     cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.1s;
+    transition: background 0.2s, transform 0.1s;
 }
 
-.cell:hover {
-    transform: scale(1.05);
+.cell:active {
+    transform: scale(0.9);
 }
 
-/* Увімкнений стан (Білий) */
 .cell.is-on {
-    background-color: white;
-    border-color: #fff;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    background-color: var(--cell-on);
+    box-shadow: 0 0 15px var(--cell-on);
 }
 
-.controls {
-    margin-top: 10px;
+/* Екран перемоги */
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 12px;
+    z-index: 100;
 }
 
-.controls button {
-    padding: 12px 20px;
-    margin: 0 5px;
-    font-size: 14px;
+.hidden {
+    display: none;
+}
+
+.win-card {
+    background: white;
+    color: #181825;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.win-card h2 { margin-top: 0; color: #a6e3a1; }
+
+button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 1rem;
     cursor: pointer;
     border: none;
     border-radius: 5px;
-    background-color: white;
-    color: #2b000d;
+    background: #89b4fa;
+    color: #1e1e2e;
     font-weight: bold;
-    text-transform: uppercase;
-    transition: 0.2s;
 }
 
-.controls button:hover {
-    background-color: #ddd;
-}
+button:hover { background: #b4befe; }
