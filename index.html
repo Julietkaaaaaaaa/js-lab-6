@@ -3,33 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lights Out — Логічна Гра</title>
+    <title>Lights Out Game</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <div class="game-wrapper">
+    <div class="game-container">
         <h1>Lights Out</h1>
         
-        <div class="stats-panel">
-            <div>Кроки: <span id="moves-count">0</span></div>
-            <div>Час: <span id="timer-display">00:00</span></div>
+        <div class="stats">
+            <p>Час: <span id="timer">0</span>с</p>
+            <p>Ходи: <span id="moves">0</span> / Ціль: <span id="target">0</span></p>
         </div>
 
-        <div class="board-container">
-            <div id="game-board" class="board"></div>
-            
-            <div id="win-overlay" class="overlay hidden">
-                <div class="win-card">
-                    <h2>ПЕРЕМОГА! 🎉</h2>
-                    <p id="final-stats"></p>
-                    <button onclick="resetGame()">Грати знову</button>
-                </div>
-            </div>
-        </div>
+        <div id="grid" class="grid"></div>
+
+        <div id="status-message"></div>
 
         <div class="controls">
-            <button onclick="resetGame()">Нова гра (Перемішати)</button>
+            <button id="new-game-btn">Нова гра</button>
+            <button id="restart-btn">Скинути рівень</button>
         </div>
     </div>
 
